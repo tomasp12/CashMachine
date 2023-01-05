@@ -1,10 +1,13 @@
-﻿namespace CashMachine
+﻿using CashMachine.Models;
+
+namespace CashMachine
 {
     public class CardNumberRule : ILoginRule
     {
+       
         public bool Check(string cardNumber, string passwordHash)
         {
-            throw new NotImplementedException();
+            return Guid.TryParse(cardNumber, out var x) ? true : false;
         }
     }
 }
