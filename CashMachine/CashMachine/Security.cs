@@ -7,8 +7,7 @@ namespace CashMachine
     {
         public static string GetHashString(string psw)
         {
-            using var sha256 = SHA256.Create();
-            return BitConverter.ToString(sha256.ComputeHash(Encoding.UTF8.GetBytes(psw))).Replace("-", "").ToLower();
+            return BitConverter.ToString(SHA256.HashData(Encoding.UTF8.GetBytes(psw))).Replace("-", "").ToLower();
         }
     }
 }

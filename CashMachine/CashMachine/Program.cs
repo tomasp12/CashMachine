@@ -4,11 +4,12 @@ using CashMachine.Config;
 //Login data:
 //      User:24a4096e-f012-49eb-8525-e3f03a332e84
 //  Password:1234
+
 // Creating Database if not exist
 if (!File.Exists(Constants.OperationDataBase))
 { 
     using Database dataBase = new();
-    dataBase.CreateInitialData();
+    dataBase.InitialDataBase();
 }
 
 // Creating Account file if not exist
@@ -24,20 +25,19 @@ CashMachineTerminal cashMachineTerminal = new();
 
 while (true)
 {
-    var login = cashMachineTerminal.DisplayLoginMenu();
+    var loginData = cashMachineTerminal.DisplayLoginMenu();
     var attempt = 1;
-    while (!bank.Login(login))
+    while (!bank.Login(loginData))
     {
         attempt++;
         if (attempt > 3)
         {
-            cashMachineTerminal.DisplayWarning("Too many login attempts");
-            
+            cashMachineTerminal.DisplayWarning("Too many login attempts.");
             return;
         }
-        cashMachineTerminal.DisplayWarning("Invalid Login");
-        login = cashMachineTerminal.DisplayLoginMenu();
+        cashMachineTerminal.DisplayWarning("Invalid Login.");
+        loginData = cashMachineTerminal.DisplayLoginMenu();
     }
-    var account = bank.GetAccount(login.User!);
-    cashMachineTerminal.DisplayMenu(account);
+    var accountData = bank.GetAccount(loginData.User!);
+    cashMachineTerminal.DisplayMenu(accountData);
 }

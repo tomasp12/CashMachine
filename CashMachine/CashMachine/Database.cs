@@ -1,14 +1,12 @@
 ﻿using CashMachine.Config;
-using Microsoft.Data.Sqlite;
-using System.Data.Common;
 using CashMachine.Models;
-using SQLitePCL;
+using Microsoft.Data.Sqlite;
 
 namespace CashMachine;
 
 public class Database : IDisposable
 {
-    private  SqliteConnection _myConnection;
+    private readonly SqliteConnection _myConnection;
 
     public Database()
     {
@@ -16,16 +14,18 @@ public class Database : IDisposable
         _myConnection.Open();
     }
 
-    public void CreateInitialData()
+    public void InitialDataBase()
     {
         CreateTable("BankTransaction", "Id INTEGER PRIMARY KEY, Date TEXT , FromCardNumber TEXT, ToCardNumber TEXT, Amount INTEGER");
-        ExecuteNonQueryForList(BankTransactionInitialData());
+        ExecuteNonQueryForList(CreateInitialData());
     }
-    
+
     private void CreateTable(string tableName, string tableColumns)
     {
-        var myCommand = new SqliteCommand("", _myConnection);
-        myCommand.CommandText = $"CREATE TABLE {tableName} ({tableColumns})";
+        var myCommand = new SqliteCommand("", _myConnection)
+        {
+            CommandText = $"CREATE TABLE {tableName} ({tableColumns})"
+        };
         myCommand.ExecuteNonQuery();
     }
 
@@ -39,36 +39,36 @@ public class Database : IDisposable
         }
     }
 
-    private List<string> BankTransactionInitialData()
+    private List<string> CreateInitialData()
     {
         List<string> sqlList = new()
         {
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -100)",
+            $"('{DateTime.Now:s}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -100)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -10)",
+            $"('{DateTime.Now:s}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -10)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -200)",
+            $"('{DateTime.Now:s}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -200)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -40)",
+            $"('{DateTime.Now:s}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -40)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -40)",
+            $"('{DateTime.Now:s}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -40)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -50)",
+            $"('{DateTime.Now:s}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -50)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -50)",
+            $"('{DateTime.Now:s}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -50)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -10)",
+            $"('{DateTime.Now:s}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -10)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -10)",
+            $"('{DateTime.Now:s}','24a4096e-f012-49eb-8525-e3f03a332e84', '24a4096e-f012-49eb-8525-e3f03a332e84', -10)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','6e51d135-a870-4854-84e6-85e170f37634', '6e51d135-a870-4854-84e6-85e170f37634', -500)",
+            $"('{DateTime.Now:s}','6e51d135-a870-4854-84e6-85e170f37634', '6e51d135-a870-4854-84e6-85e170f37634', -500)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','6e51d135-a870-4854-84e6-85e170f37634', '6e51d135-a870-4854-84e6-85e170f37634', -400)",
+            $"('{DateTime.Now:s}','6e51d135-a870-4854-84e6-85e170f37634', '6e51d135-a870-4854-84e6-85e170f37634', -400)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','6e51d135-a870-4854-84e6-85e170f37634', '6e51d135-a870-4854-84e6-85e170f37634', -100)",
+            $"('{DateTime.Now:s}','6e51d135-a870-4854-84e6-85e170f37634', '6e51d135-a870-4854-84e6-85e170f37634', -100)",
             $"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-            $"('{DateTime.Now.ToString("s")!}','6e51d135-a870-4854-84e6-85e170f37634', '6e51d135-a870-4854-84e6-85e170f37634', -300)"
+            $"('{DateTime.Now:s}','6e51d135-a870-4854-84e6-85e170f37634', '6e51d135-a870-4854-84e6-85e170f37634', -300)"
         };
         return sqlList;
     }

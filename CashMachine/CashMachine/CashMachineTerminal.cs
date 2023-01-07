@@ -20,7 +20,7 @@ namespace CashMachine
                 switch (choice)
                 {
                     case "1":
-                        DisplayWarning($"Your balance is {account.Balance}");
+                        DisplayWarning($"Your balance is: {account.Balance}");
                         break;
                     case "2":
                         ShowTransaction(account.CardNumber);
@@ -49,7 +49,7 @@ namespace CashMachine
             var transactionsList = repository.GetListOfLastTransaction(cardNumber);
             foreach (var transaction in transactionsList)
             {
-                DisplayWarning($"{transaction.Amount} Eur, at {transaction.Date:MM/dd/yy HH/mm} from: {transaction.FromCardNumber} ");
+                Console.WriteLine($"{transaction.Amount} Eur, at: {transaction.Date:MM/dd/yy HH/mm} from: {transaction.FromCardNumber} ");
             }
             Console.ReadKey();
         }
@@ -58,19 +58,29 @@ namespace CashMachine
         {
             Console.Clear();
             using OperationDataRepository repository = new();
-            Console.Write("Enter amount to withdraw: ");
-            var amount = int.Parse(Console.ReadLine()!);
+            Console.Write("Enter amount to withdraw(exit 0): ");
+            int amount;
+            while (!int.TryParse(Console.ReadLine(), out amount))
+            {
+                DisplayWarning("Įvedimo klaida");
+                Console.Clear();
+                Console.Write("Enter amount to withdraw(exit 0): ");
+            }
+            if (amount == 0)
+            {
+                return;
+            }
             if (amount > 1000)
             {
-                DisplayWarning("Maximum withdrawal amount is 1000");
+                DisplayWarning("Maximum withdrawal amount is 1000.");
             }
             else if (repository.GetCountOfTransactionToday(account.CardNumber) >= 10)
             {
-                DisplayWarning("Maximum number of transactions per day exceeded");
+                DisplayWarning("Maximum number of transactions per day exceeded.");
             }
             else if (account.Balance < amount)
             {
-                DisplayWarning("Insufficient balance");
+                DisplayWarning("Insufficient balance.");
             }
             else
             {
@@ -90,7 +100,7 @@ namespace CashMachine
             };
             using OperationDataRepository repository = new();
             repository.AddTransaction(transaction);
-            DisplayWarning("Transaction successful");
+            DisplayWarning("Transaction successful.");
         }
 
         public LoginCredentials DisplayLoginMenu()

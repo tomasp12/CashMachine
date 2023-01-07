@@ -17,8 +17,9 @@ namespace CashMachine
 
         public void AddTransaction(Transaction transaction)
         {
-            ExecuteNonQuery("INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
-                            $"('{DateTime.Now.ToString("s")!}','{transaction.FromCardNumber}', '{transaction.ToCardNumber}', {transaction.Amount})");
+             ExecuteNonQuery($"INSERT INTO BankTransaction (`Date`, `FromCardNumber`, `ToCardNumber`, Amount) VALUES " +
+                             $"('{DateTime.Now:s}','{transaction.FromCardNumber}', '{transaction.ToCardNumber}', {transaction.Amount})"
+                             );
         }
 
         public List<Transaction> GetListOfLastTransaction(string cardNumber)
@@ -45,9 +46,9 @@ namespace CashMachine
             var endDate = DateTime.Today.AddDays(1).AddTicks(-1);
 
             var results = ExecuteReader($"SELECT * FROM BankTransaction " +
-                                                          $"WHERE FromCardNumber = '{cardNumber}' " +
-                                                          $"AND Date BETWEEN '{startDate:s}' AND '{endDate:s}';"
-                                        );
+                                                      $"WHERE FromCardNumber = '{cardNumber}' " +
+                                                      $"AND Date BETWEEN '{startDate:s}' AND '{endDate:s}';"
+                                                      );
             return results.Cast<object>().Count();
         }
 
