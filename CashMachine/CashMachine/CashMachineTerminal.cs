@@ -1,15 +1,9 @@
 ﻿using CashMachine.Models;
-using System.Security.Principal;
-using System.Threading.Channels;
 
 namespace CashMachine
 {
     public class CashMachineTerminal
     {
-        public CashMachineTerminal()
-        {
-
-        }
         public void DisplayMenu(BankAccount account)
         {
             var exit = false;
@@ -26,22 +20,15 @@ namespace CashMachine
                 switch (choice)
                 {
                     case "1":
-                        Console.Clear();
-                        Console.WriteLine($"Your balance is {account.Balance}");
-                        Console.ReadKey();
+                        DisplayWarning($"Your balance is {account.Balance}");
                         break;
                     case "2":
-                        Console.Clear();
                         ShowTransaction(account.CardNumber);
-                        Console.ReadKey();
                         break;
                     case "3":
-                        Console.Clear();
                         WithdrawCash(account);
-                        Console.ReadKey();
                         break;
                     case "4":
-                        Console.Clear();
                         exit = true;
                         break;
                     case "000-005":
@@ -56,34 +43,40 @@ namespace CashMachine
 
         private void ShowTransaction(string cardNumber)
         {
+            Console.Clear();
             Console.WriteLine("Last 5 transaction:");
             using OperationDataRepository repository = new();
-            List<Transaction> transactionsList = repository.GetListOfLastTransaction(cardNumber);
-            foreach (Transaction transaction in transactionsList)
+            var transactionsList = repository.GetListOfLastTransaction(cardNumber);
+            foreach (var transaction in transactionsList)
             {
-                Console.WriteLine($"{transaction.Date} {transaction.Amount}");
+                DisplayWarning($"{transaction.Amount} Eur, at {transaction.Date:MM/dd/yy HH/mm} from: {transaction.FromCardNumber} ");
             }
+            Console.ReadKey();
         }
 
         private void WithdrawCash(BankAccount account)
         {
+            Console.Clear();
+            using OperationDataRepository repository = new();
             Console.Write("Enter amount to withdraw: ");
-            int amount = int.Parse(Console.ReadLine()!);
+            var amount = int.Parse(Console.ReadLine()!);
             if (amount > 1000)
             {
-                Console.WriteLine("Maximum withdrawal amount is 1000");
+                DisplayWarning("Maximum withdrawal amount is 1000");
+            }
+            else if (repository.GetCountOfTransactionToday(account.CardNumber) >= 10)
+            {
+                DisplayWarning("Maximum number of transactions per day exceeded");
+            }
+            else if (account.Balance < amount)
+            {
+                DisplayWarning("Insufficient balance");
             }
             else
             {
-                if (account.Balance < amount)
-                {
-                    Console.WriteLine("Insufficient balance");
-                }
-                else
-                {
-                    WithdrawCashProcess(account, amount);
-                }
+                WithdrawCashProcess(account, amount);
             }
+            Console.Clear();
         }
 
         private void WithdrawCashProcess(BankAccount account, int amount)
@@ -97,17 +90,24 @@ namespace CashMachine
             };
             using OperationDataRepository repository = new();
             repository.AddTransaction(transaction);
-            Console.WriteLine("Transaction successful");
+            DisplayWarning("Transaction successful");
         }
 
         public LoginCredentials DisplayLoginMenu()
         {
-            Console.Write("Enter your card number(Empty to default Guid value): ");
+            Console.Clear();
+            Console.Write("Enter your card number: ");
             var userId = Console.ReadLine()!;
-            userId = string.IsNullOrEmpty(userId) ? "24a4096e-f012-49eb-8525-e3f03a332e84" : userId;
-            Console.Write("Enter your password(valid 1234): ");
+            Console.Write("Enter your password: ");
             var userPassword = Security.GetHashString(Console.ReadLine()!);
             return new LoginCredentials(userId, userPassword);
+        }
+
+        public void DisplayWarning(string message)
+        {
+            Console.Clear();
+            Console.WriteLine(message);
+            Console.ReadKey();
         }
     }
 }

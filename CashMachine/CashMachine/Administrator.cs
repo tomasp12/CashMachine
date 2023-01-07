@@ -12,12 +12,6 @@
             Console.Write("Enter your password: ");
             var userPassword = Security.GetHashString(Console.ReadLine()!);
             Console.WriteLine(userPassword);
-            // Console.Write("Enter amount: ");
-            // int amount = int.Parse(Console.ReadLine()!);
-            // Console.Write("Admin user(y/n): ");
-            // bool admin = Console.ReadLine()! == "y"? true :false;
-            // Bank bank = new();
-            
             Console.ReadKey();
         }
     }

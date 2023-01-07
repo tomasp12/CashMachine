@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.InteropServices;
-using CashMachine;
+﻿using CashMachine;
 using CashMachine.Models;
 using CashMachine.Config;
-
+//Login data:
+//      User:24a4096e-f012-49eb-8525-e3f03a332e84
+//  Password:1234
 // Creating Database if not exist
 if (!File.Exists(Constants.OperationDataBase))
 { 
@@ -19,8 +19,7 @@ if (!File.Exists(Constants.AccountsFile))
 }
 
 //Main program
-Bank bank = new();
-bank.LoadAccounts();
+using Bank bank = new();
 CashMachineTerminal cashMachineTerminal = new();
 
 while (true)
@@ -32,16 +31,13 @@ while (true)
         attempt++;
         if (attempt > 3)
         {
-            Console.Clear();
-            Console.WriteLine("Too many login attempts");
-            Console.ReadKey();
+            cashMachineTerminal.DisplayWarning("Too many login attempts");
+            
             return;
         }
-        Console.Clear();
-        Console.WriteLine("Invalid Login");
+        cashMachineTerminal.DisplayWarning("Invalid Login");
         login = cashMachineTerminal.DisplayLoginMenu();
     }
     var account = bank.GetAccount(login.User!);
     cashMachineTerminal.DisplayMenu(account);
-    bank.SaveAccounts();
 }

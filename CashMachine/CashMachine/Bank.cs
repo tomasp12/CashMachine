@@ -3,11 +3,17 @@ using CashMachine.Models;
 
 namespace CashMachine
 {
-    public class Bank
+    public class Bank : IDisposable
     {
         private readonly Dictionary<string, BankAccount> _accounts = new();
         private readonly List<ILoginRule> _loginRules = new();
-        public void LoadAccounts()
+
+        public Bank()
+        {
+            LoadAccounts();
+        }
+
+        private void LoadAccounts()
         {
             using StreamReader sr = new(Constants.AccountsFile);
             while (!sr.EndOfStream)
@@ -23,7 +29,7 @@ namespace CashMachine
             _loginRules.Add(new AccountMatchRule(_accounts));
         }
 
-        public void SaveAccounts()
+        private void SaveAccounts()
         {
             using StreamWriter sw = new(Constants.AccountsFile);
             foreach (var account in _accounts.Select(x => x.Value))
@@ -39,6 +45,11 @@ namespace CashMachine
         public bool Login(LoginCredentials login)
         {
             return _loginRules.All(rule => rule.Check(login.User!, login.Password!));
+        }
+
+        public void Dispose()
+        {
+            SaveAccounts();
         }
     }
 }
